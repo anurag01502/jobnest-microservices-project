@@ -1,4 +1,5 @@
-package com.authservice.security;
+package com.company.security;
+
 
 import java.util.Date;
 import org.slf4j.Logger;
@@ -58,6 +59,5 @@ public class JwtUtil {
 
         return extractUsername(token).equals(username) ;
         	}
-
-
+    
 }

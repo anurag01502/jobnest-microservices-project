@@ -7,15 +7,20 @@ import org.springframework.stereotype.Service;
 import com.company.dto.CompanyCardInfoDto;
 import com.company.repository.CompanyCardRepository;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class CompanyCardService {
 
 	
     private final CompanyCardRepository companyRepository;
 
+    
+    
+    public CompanyCardService(CompanyCardRepository companyRepository)
+    {
+    	this.companyRepository =companyRepository;
+    	
+    }
     public Page<CompanyCardInfoDto> getCompanyCards(Pageable pageable) {
 
         return companyRepository.getCompanyCards(pageable)
