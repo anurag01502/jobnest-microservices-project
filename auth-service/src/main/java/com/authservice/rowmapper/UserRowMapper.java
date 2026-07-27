@@ -10,7 +10,6 @@ import com.authservice.model.UserModel;
 import com.authservice.model.UserRequest;
 
 
-
 public class UserRowMapper implements RowMapper<UserModel>
 {
 	
