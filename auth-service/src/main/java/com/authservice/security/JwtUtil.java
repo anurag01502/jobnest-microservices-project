@@ -54,10 +54,23 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    public boolean validateToken(String token,String username) {
+    
+    private boolean isTokenExpired(String token) {
 
-        return extractUsername(token).equals(username) ;
-        	}
+        Date expiration = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.before(new Date());
+    }
+    public boolean validateToken(String token, String username) {
+
+        return extractUsername(token).equals(username)
+                && !isTokenExpired(token);
+    }
 
 
 }
