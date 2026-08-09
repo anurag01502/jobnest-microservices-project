@@ -1,0 +1,147 @@
+package com.job.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public class JobRequestDTO {
+
+    private Long companyId;
+
+    private String title;
+
+    private String description;
+
+    private String employmentType;
+
+    private String workMode;
+
+    private BigDecimal experienceMin;
+
+    private BigDecimal experienceMax;
+
+    private BigDecimal salaryMin;
+
+    private BigDecimal salaryMax;
+
+    private String salaryCurrency;
+
+    private String location;
+
+    private Integer openings;
+
+    private String status;
+
+    private LocalDate applicationDeadline;
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(String employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public String getWorkMode() {
+        return workMode;
+    }
+
+    public void setWorkMode(String workMode) {
+        this.workMode = workMode;
+    }
+
+    public BigDecimal getExperienceMin() {
+        return experienceMin;
+    }
+
+    public void setExperienceMin(BigDecimal experienceMin) {
+        this.experienceMin = experienceMin;
+    }
+
+    public BigDecimal getExperienceMax() {
+        return experienceMax;
+    }
+
+    public void setExperienceMax(BigDecimal experienceMax) {
+        this.experienceMax = experienceMax;
+    }
+
+    public BigDecimal getSalaryMin() {
+        return salaryMin;
+    }
+
+    public void setSalaryMin(BigDecimal salaryMin) {
+        this.salaryMin = salaryMin;
+    }
+
+    public BigDecimal getSalaryMax() {
+        return salaryMax;
+    }
+
+    public void setSalaryMax(BigDecimal salaryMax) {
+        this.salaryMax = salaryMax;
+    }
+
+    public String getSalaryCurrency() {
+        return salaryCurrency;
+    }
+
+    public void setSalaryCurrency(String salaryCurrency) {
+        this.salaryCurrency = salaryCurrency;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Integer getOpenings() {
+        return openings;
+    }
+
+    public void setOpenings(Integer openings) {
+        this.openings = openings;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDate getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
+}
