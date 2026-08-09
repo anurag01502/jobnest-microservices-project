@@ -188,20 +188,15 @@ public class Job {
 		this.applicationDeadline = applicationDeadline;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	@PrePersist
+	protected void onCreate() {
+	    createdAt = LocalDateTime.now();
+	    updatedAt = LocalDateTime.now();
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
+	@PreUpdate
+	protected void onUpdate() {
+	    updatedAt = LocalDateTime.now();
 	}
 
   
