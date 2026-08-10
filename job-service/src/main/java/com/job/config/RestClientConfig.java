@@ -26,12 +26,5 @@ public class RestClientConfig {
                 .build();
     }
 
-    @Bean
-    public RestClient interviewRestClient(
-            @Value("${interview-service.base-url}") String baseUrl) {
-
-        return RestClient.builder()
-                .baseUrl(baseUrl)
-                .build();
-    }
+   
 }
