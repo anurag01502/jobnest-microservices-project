@@ -1,5 +1,6 @@
 package com.job.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -8,9 +9,29 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Bean
-    public RestClient restClient(RestClient.Builder builder) {
+    public RestClient userRestClient(
+            @Value("${user-service.base-url}") String baseUrl) {
 
-        return builder
+        return RestClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+    }
+
+    @Bean
+    public RestClient companyRestClient(
+            @Value("${company-service.base-url}") String baseUrl) {
+
+        return RestClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+    }
+
+    @Bean
+    public RestClient interviewRestClient(
+            @Value("${interview-service.base-url}") String baseUrl) {
+
+        return RestClient.builder()
+                .baseUrl(baseUrl)
                 .build();
     }
 }

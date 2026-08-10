@@ -1,16 +1,24 @@
 package com.job.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class UserExternalService {
 	
 	
 	@Value("${user-service.base-url}")
-	static String USER_SERVICE_BASE_URL;
+	private String USER_SERVICE_BASE_URL;
 	
+	private final RestClient userRestClient;
 	
+    public UserExternalService(
+            @Qualifier("userRestClient") RestClient userRestClient) {
+
+        this.userRestClient = userRestClient;
+    }
     // GET
     /*public UserResponse getUser(Long id) {
 
