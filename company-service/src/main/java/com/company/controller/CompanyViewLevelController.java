@@ -6,11 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.company.dto.CompanyCardInfoDto;
+import com.company.dto.CompanyDTO;
 import com.company.service.CompanyCardService;
 
 @RequestMapping("/company")
@@ -35,4 +37,14 @@ public class CompanyViewLevelController {
 
 	    return ResponseEntity.ok(companyCardService.getCompanyCards(pageable));
 	}
+	@PreAuthorize("hasAnyRole('USER','SUPER_ADMIN','RECRUITER','COMPANY_ADMIN')")
+	@GetMapping("/{companyId}")
+	public ResponseEntity<CompanyDTO> getCompanyById(
+	        @PathVariable Long companyId) {
+
+	    return ResponseEntity.ok(
+	            companyCardService.getCompanyById(companyId)
+	    );
+	}
+	
 }

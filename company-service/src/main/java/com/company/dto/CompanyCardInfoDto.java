@@ -26,6 +26,11 @@ public class CompanyCardInfoDto {
 		this.ratings = ratings;
 		this.totalClients = totalClients;
 	}
+    public CompanyCardInfoDto()
+    {
+    	
+    }
+    
     
     
 }
