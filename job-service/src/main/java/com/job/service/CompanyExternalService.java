@@ -1,10 +1,12 @@
 package com.job.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import com.job.dto.CompanyDTO;
 
+@Service
 public class CompanyExternalService {
 
 	private final RestClient companyRestClient;
@@ -15,7 +17,7 @@ public class CompanyExternalService {
         this.companyRestClient = companyRestClient;
     }
     
-    public CompanyDTO getUser(Long companyId) {
+    public CompanyDTO getCompanyById(Long companyId) {
 
     return companyRestClient
             .get()
