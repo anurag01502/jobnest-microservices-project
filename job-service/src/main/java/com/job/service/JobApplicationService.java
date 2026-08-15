@@ -1,5 +1,7 @@
 package com.job.service;
 
+import java.beans.Transient;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -7,9 +9,12 @@ import org.springframework.stereotype.Service;
 import com.job.dto.JobApplicationRequestDto;
 import com.job.dto.UserProfileResponseExternalDto;
 import com.job.exception.CustomRuntimeException;
+import com.job.model.JobApplication;
 import com.job.repository.JobApplicationRepository;
 import com.job.repository.JobRepository;
 import com.job.rowmapper.JobApplicationRowMapper;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class JobApplicationService {
@@ -38,8 +43,8 @@ public class JobApplicationService {
 		
 	}
 	
-	
-	public void  applyForJob(JobApplicationRequestDto jobApplicationRequest,Authentication authentication)
+	@Transactional
+	public JobApplication  applyForJob(JobApplicationRequestDto jobApplicationRequest,Authentication authentication)
 	{
 		
 		UserProfileResponseExternalDto userProfileResponseExternalDto= userExternalService.getUser(authentication.getName()); // validates the user existance
@@ -50,7 +55,7 @@ public class JobApplicationService {
 		
 		jobApplicationRequest.setCandidateId(userProfileResponseExternalDto.getUserId());
 		
-		jobApplicationRepository.save(JobApplicationRowMapper.toModel(jobApplicationRequest));
+		return jobApplicationRepository.save(JobApplicationRowMapper.toModel(jobApplicationRequest));
 	}
 	
 
