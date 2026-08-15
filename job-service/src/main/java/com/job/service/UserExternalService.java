@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.job.dto.UserProfileResponseExternalDto;
+
 @Service
 public class UserExternalService {
 	
@@ -17,16 +19,16 @@ public class UserExternalService {
 
         this.userRestClient = userRestClient;
     }
-    // GET
-    /*public UserResponse getUser(Long id) {
+    
+    public UserProfileResponseExternalDto getUser(String identifier) {
 
-        return restClient
+        return userRestClient
                 .get()
-                .uri("/users/{id}", id)
+                .uri("/api/users/{identifier}", identifier)
                 .retrieve()
-                .body(UserResponse.class);
+                .body(UserProfileResponseExternalDto.class);
     }
-
+/*
     // POST
     public UserResponse createUser(UserRequest request) {
 
