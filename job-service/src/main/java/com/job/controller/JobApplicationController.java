@@ -3,13 +3,10 @@ package com.job.controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.job.dto.JobApplicationDto;
 import com.job.exception.CustomRuntimeException;
 import com.job.model.JobApplication;
-import com.job.repository.JobApplicationRepository;
 import com.job.service.JobApplicationService;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
