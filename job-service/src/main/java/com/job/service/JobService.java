@@ -2,7 +2,7 @@ package com.job.service;
 
 import org.springframework.stereotype.Service;
 
-import com.job.dto.JobRequestDTO;
+import com.job.dto.JobDTO;
 import com.job.model.Job;
 import com.job.repository.JobRepository;
 import com.job.rowmapper.JobRowmapper;
@@ -19,7 +19,7 @@ public class JobService {
 		this.companyExternalService = companyExternalService;
     }
 
-    public Job createJobPost(JobRequestDTO jobRequestDTO) {
+    public Job createJobPost(JobDTO jobRequestDTO) {
 
 
         // Validate that company exists in Company Service

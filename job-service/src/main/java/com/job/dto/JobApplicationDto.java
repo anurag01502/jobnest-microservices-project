@@ -2,7 +2,7 @@ package com.job.dto;
 
 import java.time.LocalDateTime;
 
-public class JobApplicationRequestDto {
+public class JobApplicationDto {
 
     private Long applicationId;
     private Long candidateId;

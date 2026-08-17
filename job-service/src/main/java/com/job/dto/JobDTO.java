@@ -3,7 +3,7 @@ package com.job.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class JobRequestDTO {
+public class JobDTO {
 
     private Long companyId;
 

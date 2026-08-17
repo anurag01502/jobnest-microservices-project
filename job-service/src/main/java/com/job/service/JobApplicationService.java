@@ -1,19 +1,18 @@
 package com.job.service;
 
-import java.beans.Transient;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import com.job.dto.JobApplicationRequestDto;
+import com.job.dto.JobApplicationDto;
 import com.job.dto.UserProfileResponseExternalDto;
 import com.job.exception.CustomRuntimeException;
 import com.job.model.JobApplication;
 import com.job.repository.JobApplicationRepository;
 import com.job.repository.JobRepository;
 import com.job.rowmapper.JobApplicationRowMapper;
-
 import jakarta.transaction.Transactional;
 
 @Service
@@ -44,7 +43,7 @@ public class JobApplicationService {
 	}
 	
 	@Transactional
-	public JobApplication  applyForJob(JobApplicationRequestDto jobApplicationRequest,Authentication authentication)
+	public JobApplication  applyForJob(JobApplicationDto jobApplicationRequest,Authentication authentication)
 	{
 		
 		UserProfileResponseExternalDto userProfileResponseExternalDto= userExternalService.getUser(authentication.getName()); // validates the user existance
@@ -56,6 +55,29 @@ public class JobApplicationService {
 		jobApplicationRequest.setCandidateId(userProfileResponseExternalDto.getUserId());
 		
 		return jobApplicationRepository.save(JobApplicationRowMapper.toModel(jobApplicationRequest));
+	}
+	
+	
+	public Page<JobApplicationDto> getMyJobApplication(Authentication authentication,
+	        int page,
+	        int size) {
+
+	    Pageable pageable = PageRequest.of(page, size);
+
+	    UserProfileResponseExternalDto userResponse= userExternalService.getUser(authentication.getName());
+	    Page<JobApplication> applicationList =
+	            jobApplicationRepository.viewMyJobApplications(pageable, userResponse.getUserId());
+
+	    return applicationList.map(application -> {
+
+	        JobApplicationDto dto= JobApplicationRowMapper.toDto(application);
+
+	        if (application.getJob() != null) {
+	            dto.setJobId(application.getJob().getJobId());
+	        }
+
+	        return dto;
+	    });
 	}
 	
 

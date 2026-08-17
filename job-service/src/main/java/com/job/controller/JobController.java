@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.job.dto.JobRequestDTO;
+import com.job.dto.JobDTO;
 import com.job.model.Job;
 import com.job.service.JobService;
 
@@ -22,7 +22,7 @@ public class JobController {
 
     @PreAuthorize("hasRole('Recruiter')")
     @PostMapping("/create-post")
-    public Job createJobPost(@RequestBody JobRequestDTO jobRequestDTO) {
+    public Job createJobPost(@RequestBody JobDTO jobRequestDTO) {
 
         return jobService.createJobPost(jobRequestDTO);
     }

@@ -1,14 +1,14 @@
 package com.job.rowmapper;
 
-import com.job.dto.JobApplicationRequestDto;
+import com.job.dto.JobApplicationDto;
 import com.job.model.Job;
 import com.job.model.JobApplication;
 
 public class JobApplicationRowMapper {
 
-    public static JobApplicationRequestDto toDto(JobApplication application) {
+    public static JobApplicationDto toDto(JobApplication application) {
 
-        JobApplicationRequestDto dto = new JobApplicationRequestDto();
+        JobApplicationDto dto = new JobApplicationDto();
 
         dto.setApplicationId(application.getApplicationId());
         dto.setCandidateId(application.getCandidateId());
@@ -24,7 +24,7 @@ public class JobApplicationRowMapper {
         return dto;
     }
 
-    public static JobApplication toModel(JobApplicationRequestDto dto) {
+    public static JobApplication toModel(JobApplicationDto dto) {
 
         JobApplication application = new JobApplication();
 
