@@ -1,11 +1,16 @@
 package com.company.model;
 
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "company")
+
+
 public class Company {
 
     @Id
@@ -19,7 +24,7 @@ public class Company {
     @Column(name = "established_year")
     private Integer establishedYear;
 
-    @Column(name = "phone", length = 20)
+    @Column(name = "phone")
     private String phone;
 
     @Column(name = "email")
@@ -28,33 +33,56 @@ public class Company {
     @Column(name = "website_url")
     private String websiteUrl;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "company_size")
     private Integer companySize;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    @OneToOne(mappedBy = "company", fetch = FetchType.LAZY)
-    private CompanyLocation companyLocation;
 
-    @OneToOne(mappedBy = "company", fetch = FetchType.LAZY)
-    private CompanyStatistics companyStatistics;
+    @OneToMany(
+        mappedBy = "company",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<CompanyLocation> locations = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "companies_available_domains",
+        joinColumns = @JoinColumn(name = "company_id"),
+        inverseJoinColumns = @JoinColumn(name = "domain_id")
+    )
+    private List<BusinessDomain> domains = new ArrayList<>();
+
+    @OneToOne(
+        mappedBy = "company",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private CompanyStatistics statistics;
+
+    @OneToOne(
+        mappedBy = "company",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private VerificationStatus verificationStatus;
 
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
 	public Long getCompanyId() {
@@ -137,20 +165,36 @@ public class Company {
 		this.updatedAt = updatedAt;
 	}
 
-	public CompanyLocation getCompanyLocation() {
-		return companyLocation;
+	public List<CompanyLocation> getLocations() {
+		return locations;
 	}
 
-	public void setCompanyLocation(CompanyLocation companyLocation) {
-		this.companyLocation = companyLocation;
+	public void setLocations(List<CompanyLocation> locations) {
+		this.locations = locations;
 	}
 
-	public CompanyStatistics getCompanyStatistics() {
-		return companyStatistics;
+	public List<BusinessDomain> getDomains() {
+		return domains;
 	}
 
-	public void setCompanyStatistics(CompanyStatistics companyStatistics) {
-		this.companyStatistics = companyStatistics;
+	public void setDomains(List<BusinessDomain> domains) {
+		this.domains = domains;
+	}
+
+	public CompanyStatistics getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(CompanyStatistics statistics) {
+		this.statistics = statistics;
+	}
+
+	public VerificationStatus getVerificationStatus() {
+		return verificationStatus;
+	}
+
+	public void setVerificationStatus(VerificationStatus verificationStatus) {
+		this.verificationStatus = verificationStatus;
 	}
     
     
