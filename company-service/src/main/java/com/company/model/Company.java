@@ -1,17 +1,11 @@
 package com.company.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "company")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Company {
 
     @Id
@@ -62,6 +56,102 @@ public class Company {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+	public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public Integer getEstablishedYear() {
+		return establishedYear;
+	}
+
+	public void setEstablishedYear(Integer establishedYear) {
+		this.establishedYear = establishedYear;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebsiteUrl() {
+		return websiteUrl;
+	}
+
+	public void setWebsiteUrl(String websiteUrl) {
+		this.websiteUrl = websiteUrl;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getCompanySize() {
+		return companySize;
+	}
+
+	public void setCompanySize(Integer companySize) {
+		this.companySize = companySize;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public CompanyLocation getCompanyLocation() {
+		return companyLocation;
+	}
+
+	public void setCompanyLocation(CompanyLocation companyLocation) {
+		this.companyLocation = companyLocation;
+	}
+
+	public CompanyStatistics getCompanyStatistics() {
+		return companyStatistics;
+	}
+
+	public void setCompanyStatistics(CompanyStatistics companyStatistics) {
+		this.companyStatistics = companyStatistics;
+	}
     
     
 }
