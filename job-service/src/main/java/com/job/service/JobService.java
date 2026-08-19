@@ -31,4 +31,10 @@ public class JobService {
         
         return jobRepository.save(job);
     }
+    
+    
+    /*public void viewAvailableJobPosts()
+    {
+    	
+    }*/
 }
