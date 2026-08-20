@@ -2,7 +2,7 @@ package com.job.dto;
 
 import java.time.LocalDateTime;
 
-public class JobApplicationDto {
+public class GetJobApplicationWithCompaniesDto {
 
     private Long applicationId;
     private Long candidateId;
@@ -11,43 +11,78 @@ public class JobApplicationDto {
     private LocalDateTime appliedAt;
     private LocalDateTime updatedAt;
     
+    
+    private  CompanyDTO company;
+
+
 	public Long getApplicationId() {
 		return applicationId;
 	}
+
+
 	public void setApplicationId(Long applicationId) {
 		this.applicationId = applicationId;
 	}
+
+
 	public Long getCandidateId() {
 		return candidateId;
 	}
+
+
 	public void setCandidateId(Long candidateId) {
 		this.candidateId = candidateId;
 	}
+
+
 	public String getStatus() {
 		return status;
 	}
+
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+
 	public Long getJobId() {
 		return jobId;
 	}
+
+
 	public void setJobId(Long jobId) {
 		this.jobId = jobId;
 	}
+
+
 	public LocalDateTime getAppliedAt() {
 		return appliedAt;
 	}
+
+
 	public void setAppliedAt(LocalDateTime appliedAt) {
 		this.appliedAt = appliedAt;
 	}
+
+
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
+
+
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
+
+
+	public CompanyDTO getCompany() {
+		return company;
+	}
+
+
+	public void setCompany(CompanyDTO company) {
+		this.company = company;
+	}
     
     
-}
+ }
