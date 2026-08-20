@@ -28,7 +28,7 @@ public class CompanyCardService {
     public Page<CompanyCardInfoDto> getCompanyCards(Pageable pageable) {
 
         return companyRepository.getCompanyCards(pageable)
-                .map(company -> new CompanyCardInfoDto(
+                .map(company -> new CompanyCardInfoDto(company.getCompanyId(),
                         company.getCompanyName(),
                         company.getLocation(),
                         company.getRatings(),

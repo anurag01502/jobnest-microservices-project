@@ -3,6 +3,8 @@ package com.company.dto;
 
 public class CompanyCardInfoDto {
 
+	
+	private Integer companyId;
     private String companyName;
     private String location;
     private Double ratings;
@@ -19,8 +21,9 @@ public class CompanyCardInfoDto {
 	public Integer getTotalClients() {
 		return totalClients;
 	}
-	public CompanyCardInfoDto(String companyName, String location, Double ratings, Integer totalClients) {
+	public CompanyCardInfoDto(Integer companyId,String companyName, String location, Double ratings, Integer totalClients) {
 		super();
+		this.companyId=companyId;
 		this.companyName = companyName;
 		this.location = location;
 		this.ratings = ratings;
@@ -30,6 +33,12 @@ public class CompanyCardInfoDto {
     {
     	
     }
+	public Integer getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
+	}
     
     
     
