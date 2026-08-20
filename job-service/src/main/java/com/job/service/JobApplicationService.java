@@ -92,8 +92,12 @@ public class JobApplicationService {
 	        if (application.getJob() != null) {
 	            dto.setJobId(application.getJob().getJobId());
 	        }
-	        
-	        
+            Long companyId = application.getJob().getCompanyId();
+
+	        if(companyId != null)
+	        {
+	        dto.setCompany(companyExternalService.getCompanyById(companyId));
+	        }
 
 	        return dto;
 	    });

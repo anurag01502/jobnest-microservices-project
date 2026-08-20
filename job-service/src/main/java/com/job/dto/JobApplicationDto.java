@@ -10,7 +10,15 @@ public class JobApplicationDto {
     private Long jobId;
     private LocalDateTime appliedAt;
     private LocalDateTime updatedAt;
-    
+    private CompanyDTO company;
+
+    public CompanyDTO getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyDTO company) {
+        this.company = company;
+    }
 	public Long getApplicationId() {
 		return applicationId;
 	}
