@@ -36,21 +36,28 @@ public class JobService {
     }
     
     
-    public Page<JobDTO> viewAvailableJobPosts( int page,
-	        int size)
-    {
-    	
-    	Pageable pageable = PageRequest.of(page, size);
-    	
-    	Page<Job> jobList = jobRepository.findAll(pageable);
-    	
-    	return jobList.map(job-> 
-    	
-    	{JobDTO jobsDto = JobRowmapper.toDto(job);
-    		
-    	return jobsDto;
-    		}
-    			
-    	);
+    public Page<JobDTO> viewAvailableJobPosts(
+            JobDTO filter,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Job> jobList = jobRepository.findJobsWithFilters(
+                filter.getCompanyId(),
+                filter.getTitle(),
+                filter.getEmploymentType(),
+                filter.getWorkMode(),
+                filter.getExperienceMin(),
+                filter.getExperienceMax(),
+                filter.getSalaryMin(),
+                filter.getSalaryMax(),
+                filter.getLocation(),
+                filter.getStatus(),
+                filter.getApplicationDeadline(),
+                pageable
+        );
+
+        return jobList.map(JobRowmapper::toDto);
     }
 }
