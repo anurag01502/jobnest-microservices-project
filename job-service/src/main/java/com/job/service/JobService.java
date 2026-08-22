@@ -44,7 +44,6 @@ public class JobService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Job> jobList = jobRepository.findJobsWithFilters(
-                filter.getCompanyId(),
                 filter.getTitle(),
                 filter.getEmploymentType(),
                 filter.getWorkMode(),
