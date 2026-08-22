@@ -1,5 +1,8 @@
 package com.job.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.job.dto.JobDTO;
@@ -33,8 +36,21 @@ public class JobService {
     }
     
     
-    /*public void viewAvailableJobPosts()
+    public Page<JobDTO> viewAvailableJobPosts( int page,
+	        int size)
     {
     	
-    }*/
+    	Pageable pageable = PageRequest.of(page, size);
+    	
+    	Page<Job> jobList = jobRepository.findAll(pageable);
+    	
+    	return jobList.map(job-> 
+    	
+    	{JobDTO jobsDto = JobRowmapper.toDto(job);
+    		
+    	return jobsDto;
+    		}
+    			
+    	);
+    }
 }

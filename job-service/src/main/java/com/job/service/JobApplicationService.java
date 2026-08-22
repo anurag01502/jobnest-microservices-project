@@ -1,7 +1,5 @@
 package com.job.service;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,15 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import com.job.dto.GetJobApplicationWithCompaniesDto;
 import com.job.dto.JobApplicationDto;
 import com.job.dto.UserProfileResponseExternalDto;
 import com.job.exception.CustomRuntimeException;
 import com.job.model.JobApplication;
 import com.job.repository.JobApplicationRepository;
 import com.job.repository.JobRepository;
-import com.job.rowmapper.GetJobApplicationWithCompaniesRowMapper;
 import com.job.rowmapper.JobApplicationRowMapper;
 import jakarta.transaction.Transactional;
 
