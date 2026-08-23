@@ -71,13 +71,6 @@ public class JobApplicationService {
 	    UserProfileResponseExternalDto userResponse= userExternalService.getUser(authentication.getName());
 	    Page<JobApplication> applicationList =
 	            jobApplicationRepository.viewMyJobApplications(pageable, userResponse.getUserId());
-
-	    
-	    
-	    
-	    
-	 
-	 
 	    	
 	    return applicationList.map(application -> {
 

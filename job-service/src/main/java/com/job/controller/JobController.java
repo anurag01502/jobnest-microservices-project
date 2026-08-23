@@ -1,7 +1,9 @@
 package com.job.controller;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,4 +40,14 @@ public class JobController {
 
         return jobService.viewAvailableJobPosts(filter, page, size);
     }
+    
+	@PreAuthorize("hasRole('Recruiter','Company Admin')")
+	@DeleteMapping("/{jobId}")
+	public ResponseEntity<Void> deleteMyJob(@RequestParam("jobId") long jobId)
+	{
+		 jobService.deleteAJob(jobId);
+		 
+		 return ResponseEntity.noContent().build();
+		
+	}
 }

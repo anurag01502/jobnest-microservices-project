@@ -10,6 +10,8 @@ import com.job.model.Job;
 import com.job.repository.JobRepository;
 import com.job.rowmapper.JobRowmapper;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class JobService {
 
@@ -22,6 +24,8 @@ public class JobService {
 		this.companyExternalService = companyExternalService;
     }
 
+    
+    @Transactional
     public Job createJobPost(JobDTO jobRequestDTO) {
 
 
@@ -58,5 +62,12 @@ public class JobService {
         );
 
         return jobList.map(JobRowmapper::toDto);
+    }
+    
+    @Transactional
+    public void deleteAJob(long jobId)
+    {
+    	jobRepository.deleteById(jobId);
+    	
     }
 }
