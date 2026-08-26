@@ -2,10 +2,15 @@ package com.job.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class JobDTO {
 
+    private Long jobId;
+
     private Long companyId;
+
+    private Long creatorId;
 
     private String title;
 
@@ -33,6 +38,20 @@ public class JobDTO {
 
     private LocalDate applicationDeadline;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+
+    public Long getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
+    }
+
+
     public Long getCompanyId() {
         return companyId;
     }
@@ -40,6 +59,16 @@ public class JobDTO {
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
+
+
+    public Long getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
 
     public String getTitle() {
         return title;
@@ -49,6 +78,7 @@ public class JobDTO {
         this.title = title;
     }
 
+
     public String getDescription() {
         return description;
     }
@@ -56,6 +86,7 @@ public class JobDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     public String getEmploymentType() {
         return employmentType;
@@ -65,6 +96,7 @@ public class JobDTO {
         this.employmentType = employmentType;
     }
 
+
     public String getWorkMode() {
         return workMode;
     }
@@ -72,6 +104,7 @@ public class JobDTO {
     public void setWorkMode(String workMode) {
         this.workMode = workMode;
     }
+
 
     public BigDecimal getExperienceMin() {
         return experienceMin;
@@ -81,6 +114,7 @@ public class JobDTO {
         this.experienceMin = experienceMin;
     }
 
+
     public BigDecimal getExperienceMax() {
         return experienceMax;
     }
@@ -88,6 +122,7 @@ public class JobDTO {
     public void setExperienceMax(BigDecimal experienceMax) {
         this.experienceMax = experienceMax;
     }
+
 
     public BigDecimal getSalaryMin() {
         return salaryMin;
@@ -97,6 +132,7 @@ public class JobDTO {
         this.salaryMin = salaryMin;
     }
 
+
     public BigDecimal getSalaryMax() {
         return salaryMax;
     }
@@ -104,6 +140,7 @@ public class JobDTO {
     public void setSalaryMax(BigDecimal salaryMax) {
         this.salaryMax = salaryMax;
     }
+
 
     public String getSalaryCurrency() {
         return salaryCurrency;
@@ -113,6 +150,7 @@ public class JobDTO {
         this.salaryCurrency = salaryCurrency;
     }
 
+
     public String getLocation() {
         return location;
     }
@@ -120,6 +158,7 @@ public class JobDTO {
     public void setLocation(String location) {
         this.location = location;
     }
+
 
     public Integer getOpenings() {
         return openings;
@@ -129,6 +168,7 @@ public class JobDTO {
         this.openings = openings;
     }
 
+
     public String getStatus() {
         return status;
     }
@@ -137,11 +177,30 @@ public class JobDTO {
         this.status = status;
     }
 
+
     public LocalDate getApplicationDeadline() {
         return applicationDeadline;
     }
 
     public void setApplicationDeadline(LocalDate applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
+    }
+
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

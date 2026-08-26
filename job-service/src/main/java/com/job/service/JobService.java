@@ -3,9 +3,12 @@ package com.job.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.job.dto.JobDTO;
+import com.job.dto.UserProfileResponseExternalDto;
+import com.job.exception.CustomRuntimeException;
 import com.job.model.Job;
 import com.job.repository.JobRepository;
 import com.job.rowmapper.JobRowmapper;
@@ -64,10 +67,22 @@ public class JobService {
         return jobList.map(JobRowmapper::toDto);
     }
     
-    @Transactional
-    public void deleteAJob(long jobId)
-    {
-    	jobRepository.deleteById(jobId);
-    	
+    public void deleteAJob(UserProfileResponseExternalDto userResponseData, long jobId) {
+
+        // Get the job
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        // Get the logged-in user's ID
+        Long userId = userResponseData.getUserId();
+
+        // Check whether the user created this job
+        if (!job.getCreatorId().equals(userId)) {
+            throw new CustomRuntimeException("You are not authorized to delete this job"
+            		,HttpStatus.FORBIDDEN);
+        }
+
+        // User is the creator, so delete the job
+        jobRepository.deleteById(jobId);
     }
 }

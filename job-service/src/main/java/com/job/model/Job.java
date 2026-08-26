@@ -18,6 +18,9 @@ public class Job {
 
     @Column(name = "company_id", nullable = false)
     private Long companyId;
+    
+    @Column(name = "creator_id", nullable = false)
+    private Long creatorId;
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -197,6 +200,38 @@ public class Job {
 	@PreUpdate
 	protected void onUpdate() {
 	    updatedAt = LocalDateTime.now();
+	}
+
+	public Long getCreatorId() {
+		return creatorId;
+	}
+
+	public void setCreatorId(Long creatorId) {
+		this.creatorId = creatorId;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public List<JobApplication> getJobApplications() {
+		return jobApplications;
+	}
+
+	public void setJobApplications(List<JobApplication> jobApplications) {
+		this.jobApplications = jobApplications;
 	}
 
   
