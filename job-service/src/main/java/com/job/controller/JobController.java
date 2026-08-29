@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.job.dto.JobDTO;
 import com.job.dto.UserProfileResponseExternalDto;
 import com.job.model.Job;
@@ -24,19 +25,26 @@ public class JobController {
     private final JobService jobService;
 
     private final UserExternalService userExternalService;
-    public JobController(JobService jobService,UserExternalService userExternalService) {
+
+
+    public JobController(
+            JobService jobService,
+            UserExternalService userExternalService) {
+
         this.jobService = jobService;
-		this.userExternalService = userExternalService;
+        this.userExternalService = userExternalService;
     }
 
-    @PreAuthorize("hasRole('Recruiter')")
+
+    @PreAuthorize("hasRole('RECRUITER')")
     @PostMapping("/create-post")
-    public Job createJobPost(@RequestBody JobDTO jobRequestDTO) {
+    public Job createJobPost(
+            @RequestBody JobDTO jobRequestDTO) {
 
         return jobService.createJobPost(jobRequestDTO);
     }
-    
-    
+
+
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/view-posts")
     public Page<JobDTO> viewAvailableJobs(
@@ -44,19 +52,30 @@ public class JobController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return jobService.viewAvailableJobPosts(filter, page, size);
+        return jobService.viewAvailableJobPosts(
+                filter,
+                page,
+                size
+        );
     }
-    
-	@PreAuthorize("hasRole('Recruiter','Company Admin')")
-	@DeleteMapping("/{jobId}")
-	public ResponseEntity<Void> deleteMyJob(Authentication authentication,@PathVariable("jobId") long jobId)
-	{
-		
-		UserProfileResponseExternalDto userDataResponse = userExternalService.getUser(authentication.getName());
-		
-		 jobService.deleteAJob(userDataResponse,jobId);
-		 
-		 return ResponseEntity.noContent().build();
-		
-	}
+
+
+    @PreAuthorize("hasAnyRole('RECRUITER', 'COMPANY_ADMIN')")
+    @DeleteMapping("/{jobId}")
+    public ResponseEntity<Void> deleteMyJob(
+            Authentication authentication,
+            @PathVariable("jobId") long jobId) {
+
+        UserProfileResponseExternalDto userDataResponse =
+                userExternalService.getUser(
+                        authentication.getName()
+                );
+
+        jobService.deleteAJob(
+                userDataResponse,
+                jobId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
 }
