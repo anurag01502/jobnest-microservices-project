@@ -1,4 +1,3 @@
-
 package com.company.rowmapper;
 
 import com.company.dto.CompanyDTO;
@@ -22,6 +21,7 @@ public class CompanyRowMapper {
         company.setWebsiteUrl(dto.getWebsiteUrl());
         company.setDescription(dto.getDescription());
         company.setCompanySize(dto.getCompanySize());
+        company.setCreatedBy(dto.getCreatedBy());
         company.setCreatedAt(dto.getCreatedAt());
         company.setUpdatedAt(dto.getUpdatedAt());
 
@@ -66,6 +66,7 @@ public class CompanyRowMapper {
         dto.setWebsiteUrl(company.getWebsiteUrl());
         dto.setDescription(company.getDescription());
         dto.setCompanySize(company.getCompanySize());
+        dto.setCreatedBy(company.getCreatedBy());
         dto.setCreatedAt(company.getCreatedAt());
         dto.setUpdatedAt(company.getUpdatedAt());
 

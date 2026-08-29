@@ -39,6 +39,11 @@ public class Company {
     @Column(name = "company_size")
     private Integer companySize;
 
+    
+    @Column(name = "created_by")
+    private Long createdBy;
+    
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -195,6 +200,14 @@ public class Company {
 
 	public void setVerificationStatus(VerificationStatus verificationStatus) {
 		this.verificationStatus = verificationStatus;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
 	}
     
     

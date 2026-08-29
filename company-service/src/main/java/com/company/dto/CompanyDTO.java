@@ -23,6 +23,8 @@ public class CompanyDTO {
 
     private Integer companySize;
 
+    private Long createdBy;
+    
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -128,4 +130,14 @@ public class CompanyDTO {
             VerificationStatusDTO verificationStatus) {
         this.verificationStatus = verificationStatus;
     }
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+    
+    
 }
