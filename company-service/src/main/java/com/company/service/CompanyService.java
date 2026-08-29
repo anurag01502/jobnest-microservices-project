@@ -95,6 +95,53 @@ public class CompanyService {
         // Convert to response DTO
         return CompanyRowMapper.toDto(savedCompany);
     }
+    
+    @Transactional
+    public CompanyDTO updateCompany(
+            Long companyId,
+            CompanyRegisterRequestDto request) {
+
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() ->
+                        new RuntimeException("Company not found"));
+
+
+        // Update company details
+        company.setCompanyName(request.getCompanyName());
+        company.setEstablishedYear(request.getEstablishedYear());
+        company.setPhone(request.getPhone());
+        company.setEmail(request.getEmail());
+        company.setWebsiteUrl(request.getWebsiteUrl());
+        company.setDescription(request.getDescription());
+        company.setCompanySize(request.getCompanySize());
+
+
+        // Update locations
+        company.getLocations().clear();
+
+        if (request.getLocations() != null) {
+
+            for (CompanyLocationDTO locationDto :
+                    request.getLocations()) {
+
+                CompanyLocation location =
+                        CompanyLocationRowmapper.toModel(locationDto);
+
+                // Establish relationship
+                location.setCompany(company);
+
+                company.getLocations().add(location);
+            }
+        }
+
+
+        Company updatedCompany =
+                companyRepository.save(company);
+
+
+        return CompanyRowMapper.toDto(updatedCompany);
+    }
+
 
 
 
