@@ -21,116 +21,68 @@ public class JobService {
     private final JobRepository jobRepository;
 
     private final CompanyExternalService companyExternalService;
-
-
-    public JobService(
-            JobRepository jobRepository,
-            CompanyExternalService companyExternalService) {
-
+    
+    public JobService(JobRepository jobRepository,CompanyExternalService companyExternalService) {
         this.jobRepository = jobRepository;
-        this.companyExternalService = companyExternalService;
+		this.companyExternalService = companyExternalService;
     }
 
-
-    // ==========================================
-    // CREATE JOB
-    // ==========================================
-
+    
     @Transactional
-    public Job createJobPost(
-            JobDTO jobRequestDTO,
-            UserProfileResponseExternalDto userResponseData) {
-
-        // Get logged-in user's ID
-        Long userId = userResponseData.getUserId();
+    public Job createJobPost(JobDTO jobRequestDTO) {
 
 
-        // Check whether company exists
-        companyExternalService.getCompanyById(
-                jobRequestDTO.getCompanyId()
-        );
-
-
-        // Convert DTO to model
+        // Validate that company exists in Company Service
+    	companyExternalService.getCompanyById(jobRequestDTO.getCompanyId() );
+    	
+    	
         Job job = JobRowmapper.toModel(jobRequestDTO);
 
-
-        // Set creator from authenticated user
-        job.setCreatorId(userId);
-
-
-        // Save job
+        
         return jobRepository.save(job);
     }
-
-
-    // ==========================================
-    // VIEW AVAILABLE JOBS
-    // ==========================================
-
+    
+    
     public Page<JobDTO> viewAvailableJobPosts(
             JobDTO filter,
             int page,
             int size) {
 
-        Pageable pageable =
-                PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
 
-        Page<Job> jobList =
-                jobRepository.findJobsWithFilters(
-                        filter.getTitle(),
-                        filter.getEmploymentType(),
-                        filter.getWorkMode(),
-                        filter.getExperienceMin(),
-                        filter.getExperienceMax(),
-                        filter.getSalaryMin(),
-                        filter.getSalaryMax(),
-                        filter.getLocation(),
-                        filter.getStatus(),
-                        filter.getApplicationDeadline(),
-                        pageable
-                );
+        Page<Job> jobList = jobRepository.findJobsWithFilters(
+                filter.getTitle(),
+                filter.getEmploymentType(),
+                filter.getWorkMode(),
+                filter.getExperienceMin(),
+                filter.getExperienceMax(),
+                filter.getSalaryMin(),
+                filter.getSalaryMax(),
+                filter.getLocation(),
+                filter.getStatus(),
+                filter.getApplicationDeadline(),
+                pageable
+        );
 
         return jobList.map(JobRowmapper::toDto);
     }
+    
+    public void deleteAJob(UserProfileResponseExternalDto userResponseData, long jobId) {
 
+        // Get the job
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
 
-    // ==========================================
-    // DELETE JOB
-    // ==========================================
+        // Get the logged-in user's ID
+        Long userId = userResponseData.getUserId();
 
-    @Transactional
-    public void deleteAJob(
-            UserProfileResponseExternalDto userResponseData,
-            long jobId) {
-
-        // Get job
-        Job job =
-                jobRepository.findById(jobId)
-                        .orElseThrow(() ->
-                                new CustomRuntimeException(
-                                        "Job not found",
-                                        HttpStatus.NOT_FOUND
-                                )
-                        );
-
-
-        // Get logged-in user's ID
-        Long userId =
-                userResponseData.getUserId();
-
-
-        // Check ownership
+        // Check whether the user created this job
         if (!job.getCreatorId().equals(userId)) {
-
-            throw new CustomRuntimeException(
-                    "You are not authorized to delete this job",
-                    HttpStatus.FORBIDDEN
-            );
+            throw new CustomRuntimeException("You are not authorized to delete this job"
+            		,HttpStatus.FORBIDDEN);
         }
 
-
-        // Delete job
-        jobRepository.delete(job);
+        // User is the creator, so delete the job
+        jobRepository.deleteById(jobId);
     }
 }
