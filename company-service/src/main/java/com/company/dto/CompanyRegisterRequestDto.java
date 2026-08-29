@@ -20,10 +20,14 @@ public class CompanyRegisterRequestDto {
     @Email(message = "Invalid email")
     private String email;
 
+    private Long createdBy;
+    
     private String websiteUrl;
 
     private String description;
 
+    
+    
     @Positive(message = "Company size must be greater than 0")
     private Integer companySize;
 
@@ -92,6 +96,14 @@ public class CompanyRegisterRequestDto {
 
 	public void setLocations(List<CompanyLocationDTO> locations) {
 		this.locations = locations;
+	}
+
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
 	}
     
     

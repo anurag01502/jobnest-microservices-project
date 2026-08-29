@@ -1,24 +1,19 @@
-
 package com.company.service;
 
 import com.company.dto.CompanyDTO;
-import com.company.dto.CompanyLocationDTO;
 import com.company.dto.CompanyRegisterRequestDto;
+import com.company.exception.CustomRuntimeException;
 import com.company.model.Company;
-import com.company.model.CompanyLocation;
 import com.company.model.VerificationStatus;
 import com.company.repository.CompanyRepository;
 import com.company.repository.VerificationStatusRepository;
-import com.company.rowmapper.CompanyLocationRowmapper;
 import com.company.rowmapper.CompanyRowMapper;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,42 +32,14 @@ public class CompanyService {
         if (companyRepository.existsByCompanyNameIgnoreCase(
                 request.getCompanyName())) {
 
-            throw new RuntimeException(
-                    "Company already exists");
+            throw new CustomRuntimeException(
+                    "Company already exists",HttpStatus.BAD_REQUEST);
         }
 
 
-        // Create Company
-        Company company = new Company();
-
-        company.setCompanyName(request.getCompanyName());
-        company.setEstablishedYear(request.getEstablishedYear());
-        company.setPhone(request.getPhone());
-        company.setEmail(request.getEmail());
-        company.setWebsiteUrl(request.getWebsiteUrl());
-        company.setDescription(request.getDescription());
-        company.setCompanySize(request.getCompanySize());
-
-
-        // Add Locations
-        List<CompanyLocation> locations = new ArrayList<>();
-
-        if (request.getLocations() != null) {
-
-            for (CompanyLocationDTO locationDto :
-                    request.getLocations()) {
-
-                CompanyLocation location =
-                        CompanyLocationRowmapper.toModel(locationDto);
-
-                // Set owning side
-                location.setCompany(company);
-
-                locations.add(location);
-            }
-        }
-
-        company.setLocations(locations);
+        // Convert DTO to Model
+        Company company =
+                CompanyRowMapper.toModel(request);
 
 
         // Save Company
@@ -86,63 +53,109 @@ public class CompanyService {
 
         verificationStatus.setCompany(savedCompany);
 
-        // Default verification status = false
+        // Default status
         verificationStatus.setStatus("UNVERIFIED");
 
-        verificationStatusRepository.save(verificationStatus);
+        verificationStatusRepository.save(
+                verificationStatus);
 
 
-        // Convert to response DTO
+        // Convert Model to DTO
         return CompanyRowMapper.toDto(savedCompany);
     }
-    
+
+
     @Transactional
     public CompanyDTO updateCompany(
             Long companyId,
             CompanyRegisterRequestDto request) {
 
-        Company company = companyRepository.findById(companyId)
-                .orElseThrow(() ->
-                        new RuntimeException("Company not found"));
+        // Find existing company
+        Company company =
+                companyRepository.findById(companyId)
+                        .orElseThrow(() ->
+                                new CustomRuntimeException(
+                                        "Company not found",HttpStatus.BAD_REQUEST));
 
 
-        // Update company details
-        company.setCompanyName(request.getCompanyName());
-        company.setEstablishedYear(request.getEstablishedYear());
-        company.setPhone(request.getPhone());
-        company.setEmail(request.getEmail());
-        company.setWebsiteUrl(request.getWebsiteUrl());
-        company.setDescription(request.getDescription());
-        company.setCompanySize(request.getCompanySize());
+        // Update fields using mapper
+        Company updatedData =
+                CompanyRowMapper.toModel(request);
+
+
+        company.setCompanyName(
+                updatedData.getCompanyName());
+
+        company.setEstablishedYear(
+                updatedData.getEstablishedYear());
+
+        company.setPhone(
+                updatedData.getPhone());
+
+        company.setEmail(
+                updatedData.getEmail());
+
+        company.setWebsiteUrl(
+                updatedData.getWebsiteUrl());
+
+        company.setDescription(
+                updatedData.getDescription());
+
+        company.setCompanySize(
+                updatedData.getCompanySize());
 
 
         // Update locations
         company.getLocations().clear();
 
-        if (request.getLocations() != null) {
+        if (updatedData.getLocations() != null) {
 
-            for (CompanyLocationDTO locationDto :
-                    request.getLocations()) {
-
-                CompanyLocation location =
-                        CompanyLocationRowmapper.toModel(locationDto);
-
-                // Establish relationship
-                location.setCompany(company);
-
-                company.getLocations().add(location);
-            }
+            updatedData.getLocations()
+                    .forEach(location -> {
+                        location.setCompany(company);
+                        company.getLocations().add(location);
+                    });
         }
 
 
-        Company updatedCompany =
+        // Save
+        Company savedCompany =
                 companyRepository.save(company);
 
 
-        return CompanyRowMapper.toDto(updatedCompany);
+        // Return DTO
+        return CompanyRowMapper.toDto(savedCompany);
     }
+    
+ 
+    @Transactional
+    public void deleteCompany(
+            Long companyId,
+            Long userId) {
+
+        // Find company
+        Company company =
+                companyRepository.findById(companyId)
+                        .orElseThrow(() ->
+                                new CustomRuntimeException(
+                                        "Company not found",
+                                        HttpStatus.NOT_FOUND
+                                )
+                        );
 
 
+        // Check ownership
+        if (!company.getCreatedBy().equals(userId)) {
 
+            throw new CustomRuntimeException(
+                    "You are not authorized to delete this company",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+
+        // Delete company
+        companyRepository.delete(company);
+    }
 
 }

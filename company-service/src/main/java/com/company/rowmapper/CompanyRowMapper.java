@@ -1,9 +1,43 @@
 package com.company.rowmapper;
 
 import com.company.dto.CompanyDTO;
+import com.company.dto.CompanyRegisterRequestDto;
 import com.company.model.Company;
 
+
 public class CompanyRowMapper {
+
+    public static Company toModel(CompanyRegisterRequestDto dto) {
+
+        if (dto == null) {
+            return null;
+        }
+
+        Company company = new Company();
+
+        company.setCompanyName(dto.getCompanyName());
+        company.setEstablishedYear(dto.getEstablishedYear());
+        company.setPhone(dto.getPhone());
+        company.setEmail(dto.getEmail());
+        company.setWebsiteUrl(dto.getWebsiteUrl());
+        company.setDescription(dto.getDescription());
+        company.setCompanySize(dto.getCompanySize());
+
+        // Locations
+        if (dto.getLocations() != null) {
+
+            company.setLocations(
+                    dto.getLocations()
+                            .stream()
+                            .map(CompanyLocationRowmapper::toModel)
+                            .peek(location -> location.setCompany(company))
+                            .toList()
+            );
+        }
+
+        return company;
+    }
+
 
     public static Company toModel(CompanyDTO dto) {
 
@@ -32,6 +66,7 @@ public class CompanyRowMapper {
                     dto.getLocations()
                             .stream()
                             .map(CompanyLocationRowmapper::toModel)
+                            .peek(location -> location.setCompany(company))
                             .toList()
             );
         }
