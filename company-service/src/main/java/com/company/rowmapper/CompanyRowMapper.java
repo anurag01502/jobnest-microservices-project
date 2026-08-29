@@ -1,3 +1,4 @@
+
 package com.company.rowmapper;
 
 import com.company.dto.CompanyDTO;
@@ -5,41 +6,90 @@ import com.company.model.Company;
 
 public class CompanyRowMapper {
 
+    public static Company toModel(CompanyDTO dto) {
+
+        if (dto == null) {
+            return null;
+        }
+
+        Company company = new Company();
+
+        company.setCompanyId(dto.getCompanyId());
+        company.setCompanyName(dto.getCompanyName());
+        company.setEstablishedYear(dto.getEstablishedYear());
+        company.setPhone(dto.getPhone());
+        company.setEmail(dto.getEmail());
+        company.setWebsiteUrl(dto.getWebsiteUrl());
+        company.setDescription(dto.getDescription());
+        company.setCompanySize(dto.getCompanySize());
+        company.setCreatedAt(dto.getCreatedAt());
+        company.setUpdatedAt(dto.getUpdatedAt());
+
+        // Locations
+        if (dto.getLocations() != null) {
+
+            company.setLocations(
+                    dto.getLocations()
+                            .stream()
+                            .map(CompanyLocationRowmapper::toModel)
+                            .toList()
+            );
+        }
+
+        // Verification Status
+        if (dto.getVerificationStatus() != null) {
+
+            company.setVerificationStatus(
+                    VerificationStatusRowmapper.toModel(
+                            dto.getVerificationStatus()
+                    )
+            );
+        }
+
+        return company;
+    }
 
 
-	public static  Company toModel(CompanyDTO dto) {
+    public static CompanyDTO toDto(Company company) {
 
-	    Company company = new Company();
+        if (company == null) {
+            return null;
+        }
 
-	    company.setCompanyId(dto.getCompanyId());
-	    company.setCompanyName(dto.getCompanyName());
-	    company.setEstablishedYear(dto.getEstablishedYear());
-	    company.setPhone(dto.getPhone());
-	    company.setEmail(dto.getEmail());
-	    company.setWebsiteUrl(dto.getWebsiteUrl());
-	    company.setDescription(dto.getDescription());
-	    company.setCompanySize(dto.getCompanySize());
-	    company.setCreatedAt(dto.getCreatedAt());
-	    company.setUpdatedAt(dto.getUpdatedAt());
+        CompanyDTO dto = new CompanyDTO();
 
-	    return company;
-	}
-	
-	public static  CompanyDTO toDto(Company company) {
+        dto.setCompanyId(company.getCompanyId());
+        dto.setCompanyName(company.getCompanyName());
+        dto.setEstablishedYear(company.getEstablishedYear());
+        dto.setPhone(company.getPhone());
+        dto.setEmail(company.getEmail());
+        dto.setWebsiteUrl(company.getWebsiteUrl());
+        dto.setDescription(company.getDescription());
+        dto.setCompanySize(company.getCompanySize());
+        dto.setCreatedAt(company.getCreatedAt());
+        dto.setUpdatedAt(company.getUpdatedAt());
 
-	    CompanyDTO dto = new CompanyDTO();
+        // Locations
+        if (company.getLocations() != null) {
 
-	    dto.setCompanyId(company.getCompanyId());
-	    dto.setCompanyName(company.getCompanyName());
-	    dto.setEstablishedYear(company.getEstablishedYear());
-	    dto.setPhone(company.getPhone());
-	    dto.setEmail(company.getEmail());
-	    dto.setWebsiteUrl(company.getWebsiteUrl());
-	    dto.setDescription(company.getDescription());
-	    dto.setCompanySize(company.getCompanySize());
-	    dto.setCreatedAt(company.getCreatedAt());
-	    dto.setUpdatedAt(company.getUpdatedAt());
+            dto.setLocations(
+                    company.getLocations()
+                            .stream()
+                            .map(CompanyLocationRowmapper::toDto)
+                            .toList()
+            );
+        }
 
-	    return dto;
-	}
+        // Verification Status
+        if (company.getVerificationStatus() != null) {
+
+            dto.setVerificationStatus(
+                    VerificationStatusRowmapper.toDto(
+                            company.getVerificationStatus()
+                    )
+            );
+        }
+
+        return dto;
+    }
 }

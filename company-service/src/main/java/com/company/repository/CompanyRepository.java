@@ -7,4 +7,6 @@ import com.company.model.Company;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
+    boolean existsByCompanyNameIgnoreCase(String companyName);
+
 }

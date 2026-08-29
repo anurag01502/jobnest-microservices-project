@@ -22,8 +22,8 @@ public class VerificationStatus {
     )
     private Company company;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status = false;
+    @Column(name = "status")
+    private String status ;
 
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
@@ -47,11 +47,11 @@ public class VerificationStatus {
         this.company = company;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
