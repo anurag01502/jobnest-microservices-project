@@ -12,7 +12,12 @@ public class CompanyRegistrationAndUpdationController {
 	
 	
 	@GetMapping("/update")
-	public String getMethodName(@RequestParam String param) {
+	public String updateCompany(@RequestParam String param) {
+		return new String();
+	}
+	
+	@GetMapping("/create-company")
+	public String createCompany(@RequestParam String param) {
 		return new String();
 	}
 	
