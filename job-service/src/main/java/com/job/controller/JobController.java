@@ -47,7 +47,7 @@ public class JobController {
         return jobService.viewAvailableJobPosts(filter, page, size);
     }
     
-	@PreAuthorize("hasAnyRole('Recruiter','Company Admin')")
+	@PreAuthorize("hasAnyRole('RECRUITER','COMPANY_ADMIN')")
 	@DeleteMapping("/{jobId}")
 	public ResponseEntity<Void> deleteMyJob(Authentication authentication,@PathVariable("jobId") long jobId)
 	{
