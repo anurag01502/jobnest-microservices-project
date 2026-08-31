@@ -1,6 +1,7 @@
 package com.company.service;
 
 import com.company.dto.CompanyDTO;
+import com.company.dto.CompanyFilterRequestDto;
 import com.company.dto.CompanyRegisterRequestDto;
 import com.company.exception.CustomRuntimeException;
 import com.company.model.Company;
@@ -11,6 +12,9 @@ import com.company.rowmapper.CompanyRowMapper;
 
 import lombok.RequiredArgsConstructor;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,4 +162,21 @@ public class CompanyService {
         companyRepository.delete(company);
     }
 
+    
+    @Transactional
+    public Page<CompanyDTO> searchCompanies(
+            CompanyFilterRequestDto request,
+            Pageable pageable) {
+
+        Page<Company> companies =
+                companyRepository.searchCompanyBasedOnFilters(
+                        request.getCompanyName(),
+                        request.getState(),
+                        request.getCity(),
+                        request.getCountry(),
+                        pageable
+                );
+
+        return companies.map(CompanyRowMapper::toDto);
+    }
 }

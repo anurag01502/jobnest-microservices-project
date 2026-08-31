@@ -22,4 +22,6 @@ public interface CompanyCardRepository extends JpaRepository<Company, Long> {
             LEFT JOIN c.companyStatistics cs
             """)
     Page<CompanyCardInfo> getCompanyCards(Pageable pageable);
+    
+
 }
