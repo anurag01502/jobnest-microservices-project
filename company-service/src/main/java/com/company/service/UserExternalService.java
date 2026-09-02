@@ -15,6 +15,7 @@ public class UserExternalService {
 	
 	private final RestClient userRestClient;
 	
+	
     public UserExternalService(
             @Qualifier("userRestClient") RestClient userRestClient) {
 

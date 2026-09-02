@@ -8,20 +8,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public interface CompanyCardRepository extends JpaRepository<Company, Long> {
+
     @Query("""
-            SELECT
-                c.companyName AS companyName,
-                cl.city AS location,
-                cs.averageRating AS ratings,
-                cs.totalClients AS totalClients
-            FROM Company c
-            LEFT JOIN c.companyLocation cl
-            LEFT JOIN c.companyStatistics cs
-            """)
+        SELECT
+            c.companyName AS companyName,
+            cl.city AS location,
+            cs.averageRating AS ratings,
+            cs.totalClients AS totalClients
+        FROM Company c
+        LEFT JOIN c.locations cl
+        LEFT JOIN c.statistics cs
+        """)
     Page<CompanyCardInfo> getCompanyCards(Pageable pageable);
-    
 
 }

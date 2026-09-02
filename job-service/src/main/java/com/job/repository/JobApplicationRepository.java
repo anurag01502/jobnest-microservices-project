@@ -13,15 +13,12 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication,L
 	
 	
 	@Query("""
-			SELECT 
-			
-			jba.applicationId as applicationId,
-			jba.candidateId as candidateId,
-			jba.status as status,
-			jba.appliedAt as appliedAt
-			from JobApplication Jba
-			
-			where jba.candidateId= :userId
-			""")
-	Page<JobApplication> viewMyJobApplications(Pageable pageable,@Param("userId") Long userId);
+		    SELECT jba
+		    FROM JobApplication jba
+		    WHERE jba.candidateId = :userId
+		    """)
+		Page<JobApplication> viewMyJobApplications(
+		    Pageable pageable,
+		    @Param("userId") Long userId
+		);
 }
