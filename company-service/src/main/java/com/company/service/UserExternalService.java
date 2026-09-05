@@ -2,12 +2,16 @@ package com.company.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.company.dto.UserProfileResponseExternalDto;
+import com.company.exception.CustomRuntimeException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,23 +33,58 @@ public class UserExternalService {
     
     public UserProfileResponseExternalDto getUser(String identifier) {
 
+        try {
 
+            HttpServletRequest request =
+                    ((ServletRequestAttributes)
+                            RequestContextHolder.getRequestAttributes())
+                            .getRequest();
 
+            String token =
+                    request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        // Get token from current request
-        HttpServletRequest request =
-                ((ServletRequestAttributes)
-                        RequestContextHolder.getRequestAttributes())
-                        .getRequest();
+            return userRestClient
+                    .get()
+                    .uri("/api/users/{identifier}", identifier)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .retrieve()
+                    .body(UserProfileResponseExternalDto.class);
 
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        } catch (HttpClientErrorException.BadRequest ex) {
 
-        return userRestClient
-                .get()
-                .uri("/api/users/{identifier}", identifier)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .retrieve()
-                .body(UserProfileResponseExternalDto.class);
+            throw new CustomRuntimeException(
+                    "Bad request!",
+                    HttpStatus.BAD_REQUEST
+            );
+
+        } catch (HttpClientErrorException.Unauthorized ex) {
+
+            throw new CustomRuntimeException(
+                    "Unauthorized!",
+                    HttpStatus.UNAUTHORIZED
+            );
+
+        } catch (HttpClientErrorException.Forbidden ex) {
+
+            throw new CustomRuntimeException(
+                    "Access denied!",
+                    HttpStatus.FORBIDDEN
+            );
+
+        } catch (HttpClientErrorException.NotFound ex) {
+
+            throw new CustomRuntimeException(
+                    "User does not exist!",
+                    HttpStatus.NOT_FOUND
+            );
+
+        } catch (HttpServerErrorException.InternalServerError ex) {
+
+            throw new CustomRuntimeException(
+                    "User service internal server error!",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 /*
     // POST
