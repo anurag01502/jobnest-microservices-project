@@ -45,7 +45,7 @@ public class UserExternalService {
 
             return userRestClient
                     .get()
-                    .uri("/api/users/{identifier}", identifier)
+                    .uri("/auth/users/{identifier}", identifier)
                     .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .body(UserProfileResponseExternalDto.class);
