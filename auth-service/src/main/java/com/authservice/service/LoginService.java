@@ -31,17 +31,37 @@ public class LoginService  {
 	
 	public Map<Object, String> login(LoginRequest loginRequest) {
 
-	    Map<Object, String> loginResponse = new ConcurrentHashMap<>();
+	    Map<Object, String> loginResponse =
+	            new ConcurrentHashMap<>();
 
-	    UserModel user = loginDao.login(loginRequest);
+	    UserModel user =
+	            loginDao.login(loginRequest);
 
-	    String token = jwtUtil.generateToken(
-	            user.getEmail(),
-	            user.getRole()
+	    String accessToken =
+	            jwtUtil.generateToken(
+	                    user.getEmail(),
+	                    user.getRole()
+	            );
+
+	    String refreshToken =
+	            jwtUtil.refreshToken(
+	                    user.getEmail()
+	            );
+
+	    loginResponse.put(
+	            "message",
+	            "Successfully LoggedIn!"
 	    );
 
-	    loginResponse.put("message", "Successfully LoggedIn!");
-	    loginResponse.put("token", token);
+	    loginResponse.put(
+	            "token",
+	            accessToken
+	    );
+
+	    loginResponse.put(
+	            "refreshToken",
+	            refreshToken
+	    );
 
 	    return loginResponse;
 	}
