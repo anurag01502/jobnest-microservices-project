@@ -19,7 +19,7 @@ import com.authservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/auth/users")
 
 public class UserController {
 
