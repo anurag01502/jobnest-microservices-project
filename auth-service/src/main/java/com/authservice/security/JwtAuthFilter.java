@@ -1,6 +1,7 @@
 package com.authservice.security;
 
 import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,67 +12,116 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.authservice.dao.UserDao;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class JwtAuthFilter
-        extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
-	
-	Logger logger  = LoggerFactory.getLogger(JwtAuthFilter.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(JwtAuthFilter.class);
 
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final UserDao userDao;
+    private final CustomUserDetailsService userDetailsService;
 
-    private UserDao userDao;
-    
-    private CustomUserDetailsService
-            userDetailsService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService,UserDao userDao) {
-		super();
-		this.jwtUtil = jwtUtil;
-		this.userDetailsService = userDetailsService;
-		this.userDao =userDao;
-	}
+    public JwtAuthFilter(
+            JwtUtil jwtUtil,
+            CustomUserDetailsService userDetailsService,
+            UserDao userDao) {
 
-	@Override
-    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.userDao = userDao;
+    }
 
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
-        
-        logger.info("URI: {} " , request.getRequestURI());
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")) 
-        {
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
 
-            token =  authHeader.substring(7);
-            username =jwtUtil.extractUsername(token);
-            
-            if (userDao.isBlackListed(token)) {
+        String authHeader =
+                request.getHeader("Authorization");
 
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        if (authHeader != null
+                && authHeader.startsWith("Bearer ")) {
+
+            String token =
+                    authHeader.substring(7);
+
+            try {
+
+                // Check blacklist
+                if (userDao.isBlackListed(token)) {
+
+                    response.setStatus(
+                            HttpServletResponse.SC_UNAUTHORIZED
+                    );
+
+                    return;
+                }
+
+
+                // Extract username
+                String username =
+                        jwtUtil.extractUsername(token);
+
+
+                if (username != null
+                        && SecurityContextHolder
+                                .getContext()
+                                .getAuthentication() == null) {
+
+                    UserDetails userDetails =
+                            userDetailsService
+                                    .loadUserByUsername(username);
+
+
+                    // Validate ACCESS token
+                    if (jwtUtil.validateToken(
+                            token,
+                            userDetails.getUsername())) {
+
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(
+                                        userDetails,
+                                        null,
+                                        userDetails.getAuthorities()
+                                );
+
+                        SecurityContextHolder
+                                .getContext()
+                                .setAuthentication(authToken);
+                    }
+                }
+
+            } catch (JwtException
+                    | IllegalArgumentException e) {
+
+                logger.warn(
+                        "Invalid JWT: {}",
+                        e.getMessage()
+                );
+
+                response.setStatus(
+                        HttpServletResponse.SC_UNAUTHORIZED
+                );
+
                 return;
             }
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails =  userDetailsService.loadUserByUsername(username);
-
-            if(jwtUtil.validateToken(token,userDetails.getUsername())) {
-
-            	
-                UsernamePasswordAuthenticationToken authToken =	new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                SecurityContextHolder.getContext() .setAuthentication(authToken);
-            }
-        }
-
-        filterChain.doFilter( request, response);
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }

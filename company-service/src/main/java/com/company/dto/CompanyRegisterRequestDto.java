@@ -31,7 +31,6 @@ public class CompanyRegisterRequestDto {
     @Positive(message = "Company size must be greater than 0")
     private Integer companySize;
 
-    @Valid
     private List<CompanyLocationDTO> locations = new ArrayList<>();
 
 	public String getCompanyName() {

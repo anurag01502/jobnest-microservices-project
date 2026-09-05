@@ -2,10 +2,15 @@ package com.authservice.service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.authservice.dao.LoginDao;
+import com.authservice.dao.UserDao;
 import com.authservice.dto.RefreshTokenResponse;
+import com.authservice.exception.CustomRuntimeException;
 import com.authservice.model.LoginRequest;
+import com.authservice.model.UserModel;
 import com.authservice.security.JwtUtil;
 
 
@@ -15,43 +20,71 @@ public class LoginService  {
 	
 	private final LoginDao loginDao;
 	private final JwtUtil jwtUtil;
-	public LoginService(LoginDao loginDao,JwtUtil jwtUtil)
+	private final UserDao userDao;
+	public LoginService(LoginDao loginDao,JwtUtil jwtUtil,UserDao userDao)
 	{
 		this.loginDao=loginDao;
 		this.jwtUtil=jwtUtil;
+		this.userDao=userDao;
 		
 	}
 	
 	public Map<Object, String> login(LoginRequest loginRequest) {
-		
-		
-		Map<Object, String> loginResponse = new ConcurrentHashMap<>();
-		
-		loginDao.login(loginRequest);		
-		String token = jwtUtil.generateToken(loginRequest.getIdentifier());
-		
-		loginResponse.put("message", "Successfully LoggedIn!");
-		loginResponse.put("token", token);
-		return loginResponse;
+
+	    Map<Object, String> loginResponse = new ConcurrentHashMap<>();
+
+	    UserModel user = loginDao.login(loginRequest);
+
+	    String token = jwtUtil.generateToken(
+	            user.getEmail(),
+	            user.getRole()
+	    );
+
+	    loginResponse.put("message", "Successfully LoggedIn!");
+	    loginResponse.put("token", token);
+
+	    return loginResponse;
 	}
-	
 	
 	public RefreshTokenResponse refreshToken(String refreshToken) {
 
 	    // 1. Validate refresh token
+	    if (!jwtUtil.validateRefreshToken(refreshToken)) {
+	        throw new CustomRuntimeException(
+	                "Invalid refresh token",
+	                HttpStatus.UNAUTHORIZED
+	        );
+	    }
 
-	    // 2. Extract username from refresh token
+	    // 2. Extract username
 	    String username = jwtUtil.extractUsername(refreshToken);
 
-	    // 3. Verify it exists and isn't revoked
+	    // 3. Verify refresh token exists and isn't revoked
+	    // Your existing refresh-token/blacklist logic here
 
-	    // 4. Generate new access token
-	    String accessToken = jwtUtil.generateToken(username);
+	    // 4. Get current user from DB
+	    UserModel user = userDao.findByIdentifier(username);
 
-	    // 5. Optionally rotate refresh token
-	    String newRefreshToken = jwtUtil.refreshToken(username);
+	    if (user == null) {
+	        throw new CustomRuntimeException(
+	                "User not found",
+	                HttpStatus.NOT_FOUND
+	        );
+	    }
 
-	    return new RefreshTokenResponse(accessToken, newRefreshToken);
+	    // 5. Generate access token using CURRENT DB role
+	    String accessToken = jwtUtil.generateToken(
+	            user.getEmail(),
+	            user.getRole()
+	    );
+
+	    // 6. Rotate refresh token
+	    String newRefreshToken = jwtUtil.refreshToken(user.getEmail());
+
+	    return new RefreshTokenResponse(
+	            accessToken,
+	            newRefreshToken
+	    );
 	}
 
 }
