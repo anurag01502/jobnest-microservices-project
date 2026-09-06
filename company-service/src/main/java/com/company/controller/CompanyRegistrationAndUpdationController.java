@@ -1,5 +1,7 @@
 package com.company.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,15 +24,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RequestMapping("/company")
 @RestController
 public class CompanyRegistrationAndUpdationController {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(CompanyRegistrationAndUpdationController.class);
+
     private final CompanyService companyService;
-
     private final UserExternalService userExternalService;
-
 
     public CompanyRegistrationAndUpdationController(
             CompanyService companyService,
@@ -40,7 +42,6 @@ public class CompanyRegistrationAndUpdationController {
         this.userExternalService = userExternalService;
     }
 
-
     @PreAuthorize("hasRole('COMPANY_ADMIN')")
     @PutMapping("/{companyId}")
     public ResponseEntity<CompanyDTO> updateCompany(
@@ -48,23 +49,29 @@ public class CompanyRegistrationAndUpdationController {
             @Valid @RequestBody CompanyRegisterRequestDto request,
             Authentication authentication) {
 
+        logger.info("Received request to update company with ID: {}",
+                companyId);
 
+        UserProfileResponseExternalDto userProfile =
+                userExternalService.getUser(authentication.getName());
 
-    	UserProfileResponseExternalDto userProfile =userExternalService.getUser(authentication.getName());
-    	
-    	
-    	request.setCreatedBy(userProfile.getUserId());
-    	
+        logger.debug("Authenticated user ID: {} is attempting to update company ID: {}",
+                userProfile.getUserId(), companyId);
+
+        request.setCreatedBy(userProfile.getUserId());
 
         CompanyDTO company =
                 companyService.updateCompany(
                         companyId,
-                        request,authentication
+                        request,
+                        authentication
                 );
+
+        logger.info("Company updated successfully. Company ID: {}",
+                companyId);
 
         return ResponseEntity.ok(company);
     }
-
 
     @PreAuthorize("hasRole('COMPANY_ADMIN')")
     @PostMapping("/register")
@@ -72,15 +79,23 @@ public class CompanyRegistrationAndUpdationController {
             @Valid @RequestBody CompanyRegisterRequestDto request,
             Authentication authentication) {
 
+        logger.info("Received request to register a new company");
+
         UserProfileResponseExternalDto userProfile =
                 userExternalService.getUser(
                         authentication.getName()
                 );
 
+        logger.debug("Authenticated user ID: {} is registering a company",
+                userProfile.getUserId());
+
         request.setCreatedBy(userProfile.getUserId());
 
         CompanyDTO company =
                 companyService.registerCompany(request);
+
+        logger.info("Company registered successfully. Company ID: {}",
+                company.getCompanyId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

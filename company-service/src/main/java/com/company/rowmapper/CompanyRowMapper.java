@@ -15,6 +15,7 @@ public class CompanyRowMapper {
 
         Company company = new Company();
 
+        company.setCreatedBy(dto.getCreatedBy());
         company.setCompanyName(dto.getCompanyName());
         company.setEstablishedYear(dto.getEstablishedYear());
         company.setPhone(dto.getPhone());
