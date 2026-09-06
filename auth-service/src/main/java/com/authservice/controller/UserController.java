@@ -80,10 +80,20 @@ public class UserController {
 	}
 	
 	@GetMapping("/{identifier}")
-	public ProfileResponse findByIdentifier(@PathVariable String identifier)
-	{
-		
-		return userService.findByIdentifier(identifier);
+	public ProfileResponse findByIdentifier(
+	        @PathVariable String identifier,
+	        Authentication authentication) {
+
+	    String authenticatedUser = authentication.getName();
+
+	    if (!authenticatedUser.equalsIgnoreCase(identifier)) {
+	        throw new CustomRuntimeException(
+	                "Access denied!",
+	                HttpStatus.FORBIDDEN
+	        );
+	    }
+
+	    return userService.findByIdentifier(identifier);
 	}
 	
 	
