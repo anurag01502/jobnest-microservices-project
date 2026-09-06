@@ -3,6 +3,7 @@ package com.company.service;
 import com.company.dto.CompanyDTO;
 import com.company.dto.CompanyFilterRequestDto;
 import com.company.dto.CompanyRegisterRequestDto;
+import com.company.dto.UserProfileResponseExternalDto;
 import com.company.exception.CustomRuntimeException;
 import com.company.model.Company;
 import com.company.model.VerificationStatus;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class CompanyService {
 
     private final VerificationStatusRepository verificationStatusRepository;
 
+    private final UserExternalService userExternalService;
 
     @Transactional
     public CompanyDTO registerCompany(
@@ -72,7 +75,7 @@ public class CompanyService {
     @Transactional
     public CompanyDTO updateCompany(
             Long companyId,
-            CompanyRegisterRequestDto request) {
+            CompanyRegisterRequestDto request,Authentication authentication) {
 
         // Find existing company
         Company company =
@@ -82,6 +85,20 @@ public class CompanyService {
                                         "Company not found",HttpStatus.BAD_REQUEST));
 
 
+        UserProfileResponseExternalDto userProfile =
+                userExternalService.getUser(
+                        authentication.getName()
+                );
+
+        if (!company.getCreatedBy().equals(userProfile.getUserId())) {
+
+            throw new CustomRuntimeException(
+                    "You are not authorized to delete this company",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+        
+        
         // Update fields using mapper
         Company updatedData =
                 CompanyRowMapper.toModel(request);

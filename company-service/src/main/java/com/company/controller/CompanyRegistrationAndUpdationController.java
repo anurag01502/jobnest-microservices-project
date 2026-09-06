@@ -48,17 +48,18 @@ public class CompanyRegistrationAndUpdationController {
             @Valid @RequestBody CompanyRegisterRequestDto request,
             Authentication authentication) {
 
-        UserProfileResponseExternalDto userProfile =
-                userExternalService.getUser(
-                        authentication.getName()
-                );
 
-        request.setCreatedBy(userProfile.getUserId());
+
+    	UserProfileResponseExternalDto userProfile =userExternalService.getUser(authentication.getName());
+    	
+    	
+    	request.setCreatedBy(userProfile.getUserId());
+    	
 
         CompanyDTO company =
                 companyService.updateCompany(
                         companyId,
-                        request
+                        request,authentication
                 );
 
         return ResponseEntity.ok(company);
