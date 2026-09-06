@@ -1,5 +1,16 @@
 package com.company.service;
 
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.company.dto.CompanyDTO;
 import com.company.dto.CompanyFilterRequestDto;
 import com.company.dto.CompanyRegisterRequestDto;
@@ -13,16 +24,6 @@ import com.company.rowmapper.CompanyRowMapper;
 
 import lombok.RequiredArgsConstructor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
@@ -34,19 +35,25 @@ public class CompanyService {
     private final VerificationStatusRepository verificationStatusRepository;
     private final UserExternalService userExternalService;
 
+
     @Transactional
     public CompanyDTO registerCompany(
-            CompanyRegisterRequestDto request) {
+            CompanyRegisterRequestDto request,
+            Authentication authentication) {
 
-        logger.info("Starting company registration for company name: {}",
-                request.getCompanyName());
+        logger.info(
+                "Starting company registration for company name: {}",
+                request.getCompanyName()
+        );
 
         // Check if company already exists
         if (companyRepository.existsByCompanyNameIgnoreCase(
                 request.getCompanyName())) {
 
-            logger.warn("Company registration failed. Company already exists: {}",
-                    request.getCompanyName());
+            logger.warn(
+                    "Company registration failed. Company already exists: {}",
+                    request.getCompanyName()
+            );
 
             throw new CustomRuntimeException(
                     "Company already exists",
@@ -54,43 +61,70 @@ public class CompanyService {
             );
         }
 
-        // Convert DTO to Model
+        // Get authenticated user
+        UserProfileResponseExternalDto userProfile =
+                userExternalService.getUser(
+                        authentication.getName()
+                );
+
+        logger.debug(
+                "Authenticated user ID: {} is registering company",
+                userProfile.getUserId()
+        );
+
+        // Convert request to Company
         Company company =
                 CompanyRowMapper.toModel(request);
 
-        logger.debug("Company request successfully converted to entity");
+        // IMPORTANT:
+        // Owner is taken from authenticated user,
+        // not from client request.
+        company.setCreatedBy(
+                userProfile.getUserId()
+        );
+
+        logger.debug(
+                "Company owner set to user ID: {}",
+                userProfile.getUserId()
+        );
 
         // Save Company
         Company savedCompany =
                 companyRepository.save(company);
 
-        logger.info("Company saved successfully. Company ID: {}",
-                savedCompany.getCompanyId());
+        logger.info(
+                "Company saved successfully. Company ID: {}",
+                savedCompany.getCompanyId()
+        );
 
         // Create Verification Status
         VerificationStatus verificationStatus =
                 new VerificationStatus();
 
         verificationStatus.setCompany(savedCompany);
-
-        // Default status
         verificationStatus.setStatus("UNVERIFIED");
 
         verificationStatusRepository.save(
-                verificationStatus);
+                verificationStatus
+        );
 
-        logger.info("Verification status created for company ID: {} with status: UNVERIFIED",
-                savedCompany.getCompanyId());
+        logger.info(
+                "Verification status created for company ID: {} with status: UNVERIFIED",
+                savedCompany.getCompanyId()
+        );
 
         // Convert Model to DTO
         CompanyDTO companyDTO =
                 CompanyRowMapper.toDto(savedCompany);
 
-        logger.info("Company registration completed successfully. Company ID: {}",
-                savedCompany.getCompanyId());
+        logger.info(
+                "Company registration completed successfully. Company ID: {}",
+                savedCompany.getCompanyId()
+        );
 
         return companyDTO;
     }
+
 
     @Transactional
     public CompanyDTO updateCompany(
@@ -98,8 +132,10 @@ public class CompanyService {
             CompanyRegisterRequestDto request,
             Authentication authentication) {
 
-        logger.info("Starting company update. Company ID: {}",
-                companyId);
+        logger.info(
+                "Starting company update. Company ID: {}",
+                companyId
+        );
 
         // Find existing company
         Company company =
@@ -113,13 +149,15 @@ public class CompanyService {
 
                             return new CustomRuntimeException(
                                     "Company not found",
-                                    HttpStatus.BAD_REQUEST
+                                    HttpStatus.NOT_FOUND
                             );
                         });
 
+        // Get authenticated user
         UserProfileResponseExternalDto userProfile =
                 userExternalService.getUser(
-                        authentication.getName());
+                        authentication.getName()
+                );
 
         logger.debug(
                 "Authenticated user ID: {} attempting to update company ID: {}",
@@ -128,7 +166,9 @@ public class CompanyService {
         );
 
         // Check ownership
-        if (!company.getCreatedBy().equals(userProfile.getUserId())) {
+        if (!Objects.equals(
+                company.getCreatedBy(),
+                userProfile.getUserId())) {
 
             logger.warn(
                     "Unauthorized company update attempt. User ID: {}, Company ID: {}",
@@ -142,51 +182,64 @@ public class CompanyService {
             );
         }
 
-        // Update fields using mapper
+        // Convert request to model
         Company updatedData =
                 CompanyRowMapper.toModel(request);
 
+        // Update basic company details
         company.setCompanyName(
-                updatedData.getCompanyName());
+                updatedData.getCompanyName()
+        );
 
         company.setEstablishedYear(
-                updatedData.getEstablishedYear());
+                updatedData.getEstablishedYear()
+        );
 
         company.setPhone(
-                updatedData.getPhone());
+                updatedData.getPhone()
+        );
 
         company.setEmail(
-                updatedData.getEmail());
+                updatedData.getEmail()
+        );
 
         company.setWebsiteUrl(
-                updatedData.getWebsiteUrl());
+                updatedData.getWebsiteUrl()
+        );
 
         company.setDescription(
-                updatedData.getDescription());
+                updatedData.getDescription()
+        );
 
         company.setCompanySize(
-                updatedData.getCompanySize());
+                updatedData.getCompanySize()
+        );
 
-        logger.debug("Basic company details updated. Company ID: {}",
-                companyId);
+        logger.debug(
+                "Basic company details updated. Company ID: {}",
+                companyId
+        );
 
         // Update locations
         company.getLocations().clear();
 
         if (updatedData.getLocations() != null) {
 
-            updatedData.getLocations()
-                    .forEach(location -> {
-                        location.setCompany(company);
-                        company.getLocations().add(location);
-                    });
+            updatedData.getLocations().forEach(location -> {
+
+                location.setCompany(company);
+
+                company.getLocations().add(location);
+            });
 
             logger.debug(
                     "Company locations updated. Company ID: {}, Location count: {}",
                     companyId,
                     updatedData.getLocations().size()
             );
+
         } else {
+
             logger.debug(
                     "No locations provided for company update. Company ID: {}",
                     companyId
@@ -197,12 +250,15 @@ public class CompanyService {
         Company savedCompany =
                 companyRepository.save(company);
 
-        logger.info("Company updated successfully. Company ID: {}",
-                savedCompany.getCompanyId());
+        logger.info(
+                "Company updated successfully. Company ID: {}",
+                savedCompany.getCompanyId()
+        );
 
         // Return DTO
         return CompanyRowMapper.toDto(savedCompany);
     }
+
 
     @Transactional
     public void deleteCompany(
@@ -232,7 +288,9 @@ public class CompanyService {
                         });
 
         // Check ownership
-        if (!company.getCreatedBy().equals(userId)) {
+        if (!Objects.equals(
+                company.getCreatedBy(),
+                userId)) {
 
             logger.warn(
                     "Unauthorized company deletion attempt. User ID: {}, Company ID: {}",
@@ -249,11 +307,14 @@ public class CompanyService {
         // Delete company
         companyRepository.delete(company);
 
-        logger.info("Company deleted successfully. Company ID: {}",
-                companyId);
+        logger.info(
+                "Company deleted successfully. Company ID: {}",
+                companyId
+        );
     }
 
-    @Transactional
+
+    @Transactional(readOnly = true)
     public Page<CompanyDTO> searchCompanies(
             CompanyFilterRequestDto request,
             Pageable pageable) {
@@ -282,6 +343,8 @@ public class CompanyService {
                 companies.getTotalElements()
         );
 
-        return companies.map(CompanyRowMapper::toDto);
+        return companies.map(
+                CompanyRowMapper::toDto
+        );
     }
 }
