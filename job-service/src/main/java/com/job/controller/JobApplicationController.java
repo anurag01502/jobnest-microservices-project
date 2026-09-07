@@ -53,8 +53,8 @@ public class JobApplicationController {
 	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/view-my-applications")
 	public Page<JobApplicationDto> getMyJobApplication(Authentication authentication,
-	        @RequestParam("page") int page,
-	        @RequestParam("size") int size
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size
 	       ){
 		
 		
