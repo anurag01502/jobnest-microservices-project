@@ -31,9 +31,9 @@ public class JobController {
 
     @PreAuthorize("hasAnyRole('RECRUITER','COMPANY_ADMIN')")
     @PostMapping("/create-post")
-    public Job createJobPost(@RequestBody JobDTO jobRequestDTO) {
+    public Job createJobPost(@RequestBody JobDTO jobRequestDTO,Authentication authentication) {
 
-        return jobService.createJobPost(jobRequestDTO);
+        return jobService.createJobPost(jobRequestDTO,authentication);
     }
     
     

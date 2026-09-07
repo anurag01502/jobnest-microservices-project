@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.job.dto.JobDTO;
@@ -18,24 +19,30 @@ import jakarta.transaction.Transactional;
 @Service
 public class JobService {
 
+    private final UserExternalService userExternalService;
+
     private final JobRepository jobRepository;
 
     private final CompanyExternalService companyExternalService;
     
-    public JobService(JobRepository jobRepository,CompanyExternalService companyExternalService) {
+    public JobService(JobRepository jobRepository,CompanyExternalService companyExternalService, UserExternalService userExternalService) {
         this.jobRepository = jobRepository;
 		this.companyExternalService = companyExternalService;
+		this.userExternalService = userExternalService;
     }
 
     
     @Transactional
-    public Job createJobPost(JobDTO jobRequestDTO) {
+    public Job createJobPost(JobDTO jobRequestDTO,Authentication authentication) {
 
 
         // Validate that company exists in Company Service
     	companyExternalService.getCompanyById(jobRequestDTO.getCompanyId() );
     	
+    	UserProfileResponseExternalDto userProfileResponseExternalDto = userExternalService
+    			.getUser(authentication.getName());
     	
+    	jobRequestDTO.setCreatorId(userProfileResponseExternalDto.getUserId());
         Job job = JobRowmapper.toModel(jobRequestDTO);
 
         
