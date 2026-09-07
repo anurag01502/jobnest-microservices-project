@@ -29,7 +29,7 @@ public class JobController {
 		this.userExternalService = userExternalService;
     }
 
-    @PreAuthorize("hasRole('Recruiter')")
+    @PreAuthorize("hasAnyRole('RECRUITER','COMPANY_ADMIN')")
     @PostMapping("/create-post")
     public Job createJobPost(@RequestBody JobDTO jobRequestDTO) {
 
