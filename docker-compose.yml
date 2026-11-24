@@ -1,0 +1,87 @@
+services:
+
+  # ---------------- MYSQL DATABASE ----------------
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "@Nu07011528"
+      MYSQL_DATABASE: auth_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ---------------- AUTH SERVICE ----------------
+  auth-service:
+    build: ./auth-service
+    image: auth-service:latest
+    container_name: auth-service-container
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: "8081"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "@Nu07011528"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ---------------- COMPANY SERVICE ----------------
+  company-service:
+    build: ./company-service
+    image: company-service:latest
+    container_name: company-service-container
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: "8082"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/company_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "@Nu07011528"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ---------------- JOB SERVICE ----------------
+  job-service:
+    build: ./job-service
+    image: job-service:latest
+    container_name: job-service-container
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      SERVER_PORT: "8083"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/job_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "@Nu07011528"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ---------------- API GATEWAY ----------------
+  api-gateway:
+    build: ./api-gateway
+    image: api-gateway:latest
+    container_name: api-gateway-container
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - company-service
+      - job-service
+
+volumes:
+  mysql-data:
