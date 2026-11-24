@@ -41,5 +41,5 @@ jobs:
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/auth_db
           SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: @Nu07011528
+          SPRING_DATASOURCE_PASSWORD: root
         run: mvn -B clean verify
