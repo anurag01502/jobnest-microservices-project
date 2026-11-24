@@ -1,44 +1,45 @@
 
-name: JobNest Microservices CI
+name: Auth Service CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: read
+    branches: [ "main" ]
 
 jobs:
-
-  auth-service-build:
-
-    name: Build Auth Service
+  build:
     runs-on: ubuntu-latest
 
-    steps:
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: auth_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
-      # 1. Checkout repository
-      - name: Checkout source code
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup Java 21
-      - name: Setup JDK 21
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-          cache-dependency-path: auth-service/pom.xml
 
-      # 3. Build and test
       - name: Build and test Auth Service
         working-directory: auth-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/auth_db
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root
         run: mvn -B clean verify
-
-      # 4. Display build success
-      - name: Build completed
-        run: echo "Auth Service CI completed successfully!"
